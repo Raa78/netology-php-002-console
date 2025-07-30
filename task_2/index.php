@@ -13,30 +13,31 @@ $listValue = array(
 );
 
 
-function numberRequest($key_msg) {
+function numberRequest($key_msg)
+{
     global $listMsg;
 
     echo $listMsg[$key_msg] . PHP_EOL;
 
     $num = trim(fgets(STDIN));
 
-    $check = variableCheck($num);
-
-    if (!$check && $num !== "0") {
-        return numberRequest($key_msg);
-    }
-
-    return $check;
+    return $num;
 }
 
 
-function variableCheck($variable) {
+function variableCheck($variable, $key_variable)
+{
     global $listMsg;
 
     $num = intval($variable);
 
-    if ($num === 0) {
+    if ($num === 0 && $variable !== "0") {
         fwrite(STDERR, $listMsg["err_input_num"] . PHP_EOL);
+        return false;
+    }
+
+    if ($variable === "0" && $key_variable === "divisor") {
+        fwrite(STDERR, $listMsg["err_zero"] . PHP_EOL);
         return false;
     }
 
@@ -44,21 +45,30 @@ function variableCheck($variable) {
 }
 
 
-function main($key_msg, $key_variable) {
+function main($key_msg, $key_variable)
+{
     global $listValue;
 
     $request_num = numberRequest($key_msg);
 
+    $validationStatus = variableCheck($request_num, $key_variable);
+
+    if ($validationStatus === false) {
+        return main($key_msg, $key_variable);
+    }
+
     $listValue[$key_variable] = $request_num;
 
-    // $validationStatus = variableCheck($request, $key_msg);
-
-    // echo "result main>>> " . $request_num . PHP_EOL;
+    return;
 }
 
 
 main("input_dividend", "dividend");
 
-print_r($listValue);
+main("input_divisor", "divisor");
+
+$divisionResult = $listValue["dividend"] / $listValue["divisor"];
+
+fwrite(STDOUT, "Результат деления >>> $divisionResult\n");
 
 ?>
