@@ -15,7 +15,7 @@ $listValue = array(
 
 function numberRequest($key_msg)
 {
-    global $listMsg;
+    global $listMsg; // на семинаре говорили, что это не лучший вариант доступа к глоб. перменной - ноя ее не меняю, а только читаю.
 
     echo $listMsg[$key_msg] . PHP_EOL;
     $num = trim(fgets(STDIN));
